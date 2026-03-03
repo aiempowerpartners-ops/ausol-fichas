@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupo Ausol — Generador de Fichas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111318;
+    --dark2: #1a1d24;
+    --card: #1e2128;
+    --border: #2a2e38;
+    --accent: #e8c547;
+    --accent2: #f5d96a;
+    --text: #e8eaf0;
+    --muted: #7a8090;
+    --red: #e05252;
+    --green: #4caf7d;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+  }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.95);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo-area { display: flex; align-items: center; gap: 14px; }
+  .logo-badge {
+    width: 42px; height: 42px; background: var(--accent);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 18px; color: var(--black);
+  }
+  .logo-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px; }
+  .logo-text span { color: var(--accent); }
+  .header-tag {
+    font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px;
+  }
+  .main { display: grid; grid-template-columns: 420px 1fr; min-height: calc(100vh - 70px); }
+  .panel-left {
+    background: var(--dark);
+    border-right: 1px solid var(--border);
+    padding: 32px 28px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 24px;
+  }
+  .panel-right {
+    background: var(--dark2);
+    padding: 32px 36px;
+    overflow-y: auto;
+  }
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .upload-zone:hover { border-color: var(--accent); background: rgba(232,197,71,0.04); }
+  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { font-size: 32px; margin-bottom: 10px; }
+  .upload-zone p { color: var(--muted); font-size: 13px; }
+  .upload-zone strong { color: var(--text); font-size: 14px; display: block; margin-bottom: 4px; }
+  .thumb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+  .thumb-item { position: relative; aspect-ratio: 4/3; border-radius: 8px; overflow: hidden; }
+  .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb-remove {
+    position: absolute; top: 4px; right: 4px;
+    background: rgba(0,0,0,0.75); color: #fff; border: none;
+    width: 20px; height: 20px; border-radius: 50%; cursor: pointer; font-size: 11px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  label { font-size: 12px; font-weight: 500; color: var(--muted); }
+  input[type=text], input[type=number], input[type=password], textarea, select {
+    background: var(--dark2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 10px 14px;
+    font-family: 'Barlow', sans-serif; font-size: 14px; width: 100%;
+    transition: border-color 0.2s; outline: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  select option { background: var(--dark2); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .platform-btn {
+    background: var(--dark2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 6px;
+    text-align: center; cursor: pointer; transition: all 0.2s;
+    font-size: 11px; font-weight: 600; color: var(--muted); user-select: none;
+  }
+  .platform-btn .picon { font-size: 18px; display: block; margin-bottom: 4px; }
+  .platform-btn.active { border-color: var(--accent); background: rgba(232,197,71,0.08); color: var(--accent); }
+  .tone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tone-btn {
+    background: var(--dark2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    cursor: pointer; transition: all 0.2s;
+    font-size: 12px; color: var(--muted); user-select: none;
+  }
+  .tone-btn .tone-name { font-weight: 600; font-size: 13px; color: var(--text); display: block; margin-bottom: 2px; }
+  .tone-btn.active { border-color: var(--accent); background: rgba(232,197,71,0.08); }
+  .tone-btn.active .tone-name { color: var(--accent); }
+  .api-section {
+    background: rgba(232,197,71,0.05); border: 1px solid rgba(232,197,71,0.15);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .api-section.has-key { border-color: rgba(76,175,125,0.3); background: rgba(76,175,125,0.05); }
+  .api-row { display: flex; gap: 8px; }
+  .api-row input { flex: 1; font-size: 12px; }
+  .btn-sm {
+    background: var(--dark2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 8px 14px;
+    cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap; transition: all 0.2s;
+  }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-generate {
+    width: 100%; padding: 16px; background: var(--accent); color: var(--black);
+    border: none; border-radius: var(--radius);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .btn-generate:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-generate:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; transform: none; }
+  .spinner {
+    width: 18px; height: 18px; border: 2px solid rgba(0,0,0,0.3);
+    border-top-color: var(--black); border-radius: 50%;
+    animation: spin 0.7s linear infinite; display: none;
+  }
+  .btn-generate.loading .spinner { display: block; }
+  .empty-state {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; gap: 16px; padding: 80px 40px; height: 100%;
+  }
+  .empty-icon { font-size: 56px; opacity: 0.2; }
+  .empty-state h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; opacity: 0.3; }
+  .empty-state p { color: var(--muted); font-size: 14px; max-width: 300px; line-height: 1.6; }
+  .loading-overlay {
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px; padding: 80px; text-align: center;
+  }
+  .loading-overlay.visible { display: flex; }
+  .loading-spinner-big {
+    width: 50px; height: 50px; border: 3px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .loading-text { color: var(--muted); font-size: 14px; }
+  .error-box {
+    background: rgba(224,82,82,0.1); border: 1px solid rgba(224,82,82,0.3);
+    border-radius: var(--radius); padding: 16px;
+    color: #ff8080; font-size: 14px; line-height: 1.5; display: none;
+  }
+  .error-box.visible { display: block; }
+  .result-area { display: none; flex-direction: column; gap: 20px; }
+  .result-area.visible { display: flex; }
+  .result-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  }
+  .result-meta { display: flex; gap: 8px; }
+  .meta-badge {
+    font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px; border: 1px solid;
+  }
+  .meta-badge.platform { border-color: rgba(232,197,71,0.4); color: var(--accent); }
+  .meta-badge.tone { border-color: var(--border); color: var(--muted); }
+  .btn-copy {
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--muted); border-radius: 8px; padding: 8px 16px;
+    cursor: pointer; font-size: 13px; transition: all 0.2s;
+  }
+  .btn-copy:hover { color: var(--accent); border-color: var(--accent); }
+  .btn-copy.copied { color: var(--green); border-color: var(--green); }
+  .ficha-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    animation: fadeUp 0.4s ease;
+  }
+  .ficha-top {
+    background: linear-gradient(135deg, #1a1d24 0%, #111318 100%);
+    padding: 24px; border-bottom: 1px solid var(--border);
+  }
+  .ficha-plataforma-tag {
+    display: inline-block; margin-bottom: 12px;
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--black); background: var(--accent); padding: 3px 10px; border-radius: 4px;
+  }
+  .ficha-titulo { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .ficha-precio { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 900; color: var(--accent); }
+  .ficha-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+  .ficha-descripcion { font-size: 15px; line-height: 1.7; color: #c8cad0; white-space: pre-wrap; }
+  .ficha-specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .spec-item { background: var(--dark2); border-radius: 8px; padding: 12px; }
+  .spec-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .spec-value { font-size: 14px; font-weight: 600; color: var(--text); margin-top: 3px; }
+  .ficha-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ficha-section-title::before { content: ''; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
+  .ficha-cta {
+    background: rgba(232,197,71,0.08); border: 1px solid rgba(232,197,71,0.2);
+    border-radius: 10px; padding: 16px; font-size: 14px; line-height: 1.6; font-style: italic;
+  }
+  .ficha-hashtags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hashtag {
+    font-size: 12px; color: var(--accent); background: rgba(232,197,71,0.08);
+    border: 1px solid rgba(232,197,71,0.2); border-radius: 6px; padding: 3px 10px;
+  }
+  .result-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-action {
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 10px 18px;
+    cursor: pointer; font-size: 13px; transition: all 0.2s;
+  }
+  .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-action.primary { background: var(--accent); color: var(--black); border-color: var(--accent); font-weight: 700; }
+  .raw-output {
+    background: var(--black); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    font-size: 13px; line-height: 1.7; color: #c8cad0;
+    white-space: pre-wrap; max-height: 400px; overflow-y: auto; display: none;
+  }
+  .raw-output.visible { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    header { padding: 16px 20px; }
+    .panel-left, .panel-right { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <div class="logo-badge">GA</div>
+    <div class="logo-text">GRUPO <span>AUSOL</span></div>
+  </div>
+  <div class="header-tag">Generador de Fichas IA</div>
+</header>
+
+<div class="main">
+  <div class="panel-left">
+
+    <div>
+      <div class="section-label">API Key</div>
+      <div class="api-section" id="apiSection">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5;">
+          Introduce tu API key de Anthropic. Si no tienes, se usa la clave por defecto.
+        </div>
+        <div class="api-row">
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+          <button class="btn-sm" onclick="saveApiKey()">Guardar</button>
+        </div>
+        <div id="apiStatus" style="font-size:11px;margin-top:8px;color:var(--muted);"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Fotos del Vehículo</div>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" multiple accept="image/*" onchange="handleFiles(this.files)">
+        <div class="upload-icon">📷</div>
+        <strong>Arrastra o selecciona fotos</strong>
+        <p>JPG, PNG · Máx. 5 imágenes</p>
+      </div>
+      <div class="thumb-grid" id="thumbGrid"></div>
+    </div>
+
+    <div>
+      <div class="section-label">Datos del Vehículo</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="grid2">
+          <div class="form-group"><label>Marca</label><input type="text" id="marca" placeholder="Citroën..."></div>
+          <div class="form-group"><label>Modelo</label><input type="text" id="modelo" placeholder="C3..."></div>
+        </div>
+        <div class="grid2">
+          <div class="form-group"><label>Año</label><input type="number" id="anno" placeholder="2021"></div>
+          <div class="form-group"><label>Precio (€)</label><input type="number" id="precio" placeholder="12500"></div>
+        </div>
+        <div class="grid2">
+          <div class="form-group"><label>Kilómetros</label><input type="number" id="km" placeholder="45000"></div>
+          <div class="form-group"><label>Combustible</label>
+            <select id="combustible">
+              <option value="">— Selecciona —</option>
+              <option>Gasolina</option><option>Diésel</option>
+              <option>Híbrido</option><option>Eléctrico</option><option>GLP</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="form-group"><label>Cambio</label>
+            <select id="cambio">
+              <option value="">— Selecciona —</option>
+              <option>Manual</option><option>Automático</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Color</label><input type="text" id="color" placeholder="Blanco perla..."></div>
+        </div>
+        <div class="form-group">
+          <label>Extras / Equipamiento</label>
+          <textarea id="extras" placeholder="GPS, techo panorámico, sensores..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Descripción libre (opcional)</label>
+          <textarea id="descripcion" placeholder="Estado, historia, observaciones..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Plataforma</div>
+      <div class="platform-grid">
+        <div class="platform-btn active" data-platform="wallapop" onclick="selectPlatform(this)"><span class="picon">🟠</span>Wallapop</div>
+        <div class="platform-btn" data-platform="coches.net" onclick="selectPlatform(this)"><span class="picon">🚗</span>Coches.net</div>
+        <div class="platform-btn" data-platform="instagram" onclick="selectPlatform(this)"><span class="picon">📸</span>Instagram</div>
+        <div class="platform-btn" data-platform="tiktok" onclick="selectPlatform(this)"><span class="picon">🎵</span>TikTok</div>
+        <div class="platform-btn" data-platform="facebook" onclick="selectPlatform(this)"><span class="picon">👥</span>Facebook</div>
+        <div class="platform-btn" data-platform="web" onclick="selectPlatform(this)"><span class="picon">🌐</span>Web propia</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Tono y Target</div>
+      <div class="tone-grid">
+        <div class="tone-btn active" data-tone="profesional" onclick="selectTone(this)"><span class="tone-name">Profesional</span>Concesionario oficial</div>
+        <div class="tone-btn" data-tone="joven" onclick="selectTone(this)"><span class="tone-name">Joven / Trendy</span>Dinámico, FOMO</div>
+        <div class="tone-btn" data-tone="familiar" onclick="selectTone(this)"><span class="tone-name">Familiar</span>Seguridad, confort</div>
+        <div class="tone-btn" data-tone="premium" onclick="selectTone(this)"><span class="tone-name">Premium</span>Exclusivo, aspiracional</div>
+        <div class="tone-btn" data-tone="economico" onclick="selectTone(this)"><span class="tone-name">Económico</span>Ahorro, oportunidad</div>
+        <div class="tone-btn" data-tone="tecnico" onclick="selectTone(this)"><span class="tone-name">Técnico</span>Datos, specs</div>
+      </div>
+    </div>
+
+    <button class="btn-generate" id="btnGenerate" onclick="generarFicha()">
+      <div class="spinner"></div>
+      <span class="btn-text">⚡ GENERAR FICHA</span>
+    </button>
+
+  </div>
+
+  <div class="panel-right" id="panelRight">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🚘</div>
+      <h2>Tu ficha aparecerá aquí</h2>
+      <p>Rellena los datos, elige plataforma y tono, y pulsa Generar Ficha.</p>
+    </div>
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner-big"></div>
+      <div class="loading-text" id="loadingText">Analizando el vehículo...</div>
+    </div>
+    <div class="error-box" id="errorBox"></div>
+    <div class="result-area" id="resultArea">
+      <div class="result-header">
+        <div class="result-meta">
+          <span class="meta-badge platform" id="badgePlatform">Wallapop</span>
+          <span class="meta-badge tone" id="badgeTone">Profesional</span>
+        </div>
+        <button class="btn-copy" id="btnCopy" onclick="copyResult()">📋 Copiar</button>
+      </div>
+      <div class="ficha-card">
+        <div class="ficha-top">
+          <div class="ficha-plataforma-tag" id="fichaTag">WALLAPOP</div>
+          <div class="ficha-titulo" id="fichaTitulo">—</div>
+          <div class="ficha-precio" id="fichaPrecio">—</div>
+        </div>
+        <div class="ficha-body">
+          <div>
+            <div class="ficha-section-title">Descripción</div>
+            <div class="ficha-descripcion" id="fichaDescripcion">—</div>
+          </div>
+          <div>
+            <div class="ficha-section-title">Especificaciones</div>
+            <div class="ficha-specs-grid" id="fichaSpecs"></div>
+          </div>
+          <div>
+            <div class="ficha-section-title">Call to Action</div>
+            <div class="ficha-cta" id="fichaCta">—</div>
+          </div>
+          <div id="hashtagsSection" style="display:none;">
+            <div class="ficha-section-title">Hashtags</div>
+            <div class="ficha-hashtags" id="fichaHashtags"></div>
+          </div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-action primary" onclick="copyResult()">📋 Copiar texto completo</button>
+        <button class="btn-action" onclick="toggleRaw()">👁 Ver texto raw</button>
+        <button class="btn-action" onclick="generarFicha()">🔄 Regenerar</button>
+      </div>
+      <div class="raw-output" id="rawOutput"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let apiKey = localStorage.getItem('ausol_apikey') || '';
+let selectedPlatform = 'wallapop';
+let selectedTone = 'profesional';
+let uploadedImages = [];
+let lastRawResult = '';
+let rawVisible = false;
+
+function saveApiKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (val) {
+    apiKey = val;
+    localStorage.setItem('ausol_apikey', val);
+    document.getElementById('apiStatus').textContent = '✓ API key guardada';
+    document.getElementById('apiStatus').style.color = 'var(--green)';
+    document.getElementById('apiSection').classList.add('has-key');
+  } else {
+    apiKey = '';
+    localStorage.removeItem('ausol_apikey');
+    document.getElementById('apiStatus').textContent = 'Usando clave del servidor';
+    document.getElementById('apiStatus').style.color = 'var(--muted)';
+  }
+}
+
+if (localStorage.getItem('ausol_apikey')) {
+  document.getElementById('apiKeyInput').value = localStorage.getItem('ausol_apikey');
+  document.getElementById('apiSection').classList.add('has-key');
+  document.getElementById('apiStatus').textContent = '✓ API key guardada';
+  document.getElementById('apiStatus').style.color = 'var(--green)';
+}
+
+const uploadZone = document.getElementById('uploadZone');
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = 'var(--accent)'; });
+uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor = ''; });
+uploadZone.addEventListener('drop', e => { e.preventDefault(); handleFiles(e.dataTransfer.files); });
+
+function handleFiles(files) {
+  Array.from(files).slice(0, 5 - uploadedImages.length).forEach(f => {
+    if (!f.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadedImages.push({ base64: e.target.result.split(',')[1], type: f.type });
+      renderThumbs();
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+function renderThumbs() {
+  const grid = document.getElementById('thumbGrid');
+  grid.innerHTML = '';
+  uploadedImages.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb-item';
+    div.innerHTML = `<img src="data:${img.type};base64,${img.base64}"><button class="thumb-remove" onclick="removeImage(${i})">×</button>`;
+    grid.appendChild(div);
+  });
+}
+
+function removeImage(i) { uploadedImages.splice(i, 1); renderThumbs(); }
+
+function selectPlatform(el) {
+  document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedPlatform = el.dataset.platform;
+}
+
+function selectTone(el) {
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedTone = el.dataset.tone;
+}
+
+function buildPrompt() {
+  const datos = {
+    marca: document.getElementById('marca').value,
+    modelo: document.getElementById('modelo').value,
+    anno: document.getElementById('anno').value,
+    precio: document.getElementById('precio').value,
+    km: document.getElementById('km').value,
+    combustible: document.getElementById('combustible').value,
+    cambio: document.getElementById('cambio').value,
+    color: document.getElementById('color').value,
+    extras: document.getElementById('extras').value,
+    descripcion: document.getElementById('descripcion').value
+  };
+
+  const vehicleInfo = Object.entries(datos).filter(([,v]) => v).map(([k,v]) => `${k}: ${v}`).join('\n');
+
+  const platforms = {
+    'wallapop': 'Wallapop: máx 500 caracteres en descripción, tono directo y personal, precio destacado al inicio.',
+    'coches.net': 'Coches.net: descripción detallada 300-800 palabras, técnico e informativo, SEO optimizado.',
+    'instagram': 'Instagram: máx 150 palabras, visual y emocional, mínimo 20 hashtags relevantes, emojis estratégicos.',
+    'tiktok': 'TikTok: 60-80 palabras máximo, muy dinámico y juvenil, 5-10 hashtags trending, lenguaje coloquial.',
+    'facebook': 'Facebook: 150-300 palabras, cercano y conversacional, invitar a contactar por WhatsApp.',
+    'web': 'Web propia: 400-700 palabras, profesional y completo, SEO, mencionar garantía y servicios Grupo Ausol.'
+  };
+
+  const tones = {
+    'profesional': 'Tono profesional, de confianza, respaldo de concesionario oficial.',
+    'joven': 'Tono joven, fresco, emojis, lenguaje coloquial, FOMO.',
+    'familiar': 'Tono familiar, seguridad, espacio, fiabilidad, confort.',
+    'premium': 'Tono premium, exclusivo, sofisticado, aspiracional.',
+    'economico': 'Tono centrado en ahorro, precio competitivo, relación calidad-precio.',
+    'tecnico': 'Tono técnico, datos exactos, especificaciones completas.'
+  };
+
+  return `Eres el agente de marketing de Grupo Ausol, concesionario oficial Citroën y Peugeot en Vélez-Málaga desde 1983.
+
+DATOS DEL VEHÍCULO:
+${vehicleInfo || 'Extrae los datos de las imágenes proporcionadas.'}
+
+PLATAFORMA: ${selectedPlatform.toUpperCase()}
+${platforms[selectedPlatform]}
+
+TONO: ${selectedTone.toUpperCase()}
+${tones[selectedTone]}
+
+Responde SOLO con este JSON sin markdown:
+{
+  "titulo": "Título atractivo máx 80 chars",
+  "precio_display": "Precio formateado ej: 12.500 €",
+  "descripcion": "Descripción optimizada para la plataforma",
+  "specs": [
+    {"label": "Año", "value": "..."},
+    {"label": "Kilómetros", "value": "..."},
+    {"label": "Combustible", "value": "..."},
+    {"label": "Cambio", "value": "..."},
+    {"label": "Color", "value": "..."}
+  ],
+  "cta": "Call to action personalizado",
+  "hashtags": ["hashtag1", "hashtag2"],
+  "texto_completo": "Texto listo para copiar y pegar en la plataforma. Incluir al final: 📍 Grupo Ausol | Vélez-Málaga | ☎️ 648 274 476"
+}`;
+}
+
+async function generarFicha() {
+  const btn = document.getElementById('btnGenerate');
+  btn.disabled = true; btn.classList.add('loading');
+  showSection('loading');
+
+  const loadingTexts = ['Analizando el vehículo...', 'Redactando la ficha...', `Optimizando para ${selectedPlatform}...`, `Aplicando tono ${selectedTone}...`];
+  let li = 0;
+  const interval = setInterval(() => {
+    document.getElementById('loadingText').textContent = loadingTexts[li++ % loadingTexts.length];
+  }, 1200);
+
+  try {
+    const content = [];
+    uploadedImages.forEach(img => {
+      content.push({ type: 'image', source: { type: 'base64', media_type: img.type, data: img.base64 }});
+    });
+    content.push({ type: 'text', text: buildPrompt() });
+
+    const response = await fetch('/api/generar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content }],
+        apiKey: apiKey || null
+      })
+    });
+
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+
+    const text = data.content[0].text;
+    lastRawResult = text;
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Respuesta inesperada, intenta de nuevo.');
+    const ficha = JSON.parse(jsonMatch[0]);
+    renderFicha(ficha);
+    showSection('result');
+
+  } catch(e) {
+    document.getElementById('errorBox').innerHTML = `<strong>⚠ Error:</strong> ${e.message}`;
+    showSection('error');
+  } finally {
+    clearInterval(interval);
+    btn.disabled = false; btn.classList.remove('loading');
+  }
+}
+
+function renderFicha(f) {
+  document.getElementById('badgePlatform').textContent = selectedPlatform.toUpperCase();
+  document.getElementById('badgeTone').textContent = selectedTone.charAt(0).toUpperCase() + selectedTone.slice(1);
+  document.getElementById('fichaTag').textContent = selectedPlatform.toUpperCase();
+  document.getElementById('fichaTitulo').textContent = f.titulo || '—';
+  document.getElementById('fichaPrecio').textContent = f.precio_display || '—';
+  document.getElementById('fichaDescripcion').textContent = f.descripcion || '—';
+  document.getElementById('fichaCta').textContent = f.cta || '—';
+  document.getElementById('rawOutput').textContent = f.texto_completo || lastRawResult;
+
+  const specs = document.getElementById('fichaSpecs');
+  specs.innerHTML = '';
+  (f.specs || []).forEach(s => {
+    if (!s.value || s.value === 'N/A') return;
+    specs.innerHTML += `<div class="spec-item"><div class="spec-label">${s.label}</div><div class="spec-value">${s.value}</div></div>`;
+  });
+
+  const hashtags = document.getElementById('fichaHashtags');
+  hashtags.innerHTML = '';
+  if (f.hashtags && f.hashtags.length) {
+    document.getElementById('hashtagsSection').style.display = 'block';
+    f.hashtags.forEach(h => {
+      hashtags.innerHTML += `<span class="hashtag">${h.startsWith('#') ? h : '#'+h}</span>`;
+    });
+  } else {
+    document.getElementById('hashtagsSection').style.display = 'none';
+  }
+}
+
+function showSection(section) {
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('loadingOverlay').classList.remove('visible');
+  document.getElementById('errorBox').classList.remove('visible');
+  document.getElementById('resultArea').classList.remove('visible');
+  if (section === 'loading') document.getElementById('loadingOverlay').classList.add('visible');
+  if (section === 'result') document.getElementById('resultArea').classList.add('visible');
+  if (section === 'error') document.getElementById('errorBox').classList.add('visible');
+}
+
+function copyResult() {
+  const text = document.getElementById('rawOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btnCopy');
+    btn.textContent = '✓ Copiado!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function toggleRaw() {
+  rawVisible = !rawVisible;
+  document.getElementById('rawOutput').classList.toggle('visible', rawVisible);
+}
+</script>
+</body>
+</html>
