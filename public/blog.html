@@ -5,29 +5,165 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ausol Blog Agent</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:#0b1220; color:#e7eefc; margin:0; padding:24px;}
-    .wrap{max-width:980px; margin:0 auto;}
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:#0b1220;
+      color:#e7eefc;
+      margin:0;
+      padding:24px;
+    }
+    .wrap{max-width:1100px; margin:0 auto;}
     h1{margin:0 0 6px 0; font-size:28px;}
     .sub{margin:0 0 18px 0; color:#a9b6d3;}
-    .card{background:#121b2f; border:1px solid #213057; border-radius:12px; padding:16px; margin:14px 0;}
-    label{display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#9fb0d8; margin:10px 0 6px;}
-    input, select, textarea{width:100%; box-sizing:border-box; background:#0c1428; border:1px solid #24345f; color:#e7eefc; border-radius:10px; padding:10px; font-size:14px; outline:none;}
+    .card{
+      background:#121b2f;
+      border:1px solid #213057;
+      border-radius:12px;
+      padding:16px;
+      margin:14px 0;
+    }
+    label{
+      display:block;
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#9fb0d8;
+      margin:10px 0 6px;
+    }
+    input, select, textarea{
+      width:100%;
+      box-sizing:border-box;
+      background:#0c1428;
+      border:1px solid #24345f;
+      color:#e7eefc;
+      border-radius:10px;
+      padding:10px;
+      font-size:14px;
+      outline:none;
+    }
     textarea{min-height:110px; resize:vertical;}
     .row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-    .btn{background:#2f6bff; border:none; color:white; padding:12px 14px; border-radius:10px; font-weight:700; cursor:pointer; width:100%;}
+    .btn{
+      background:#2f6bff;
+      border:none;
+      color:white;
+      padding:12px 14px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      width:100%;
+    }
     .btn:disabled{opacity:.6; cursor:not-allowed;}
-    .msg{margin-top:10px; padding:10px 12px; border-radius:10px; display:none;}
-    .ok{display:block; background:rgba(30,200,120,.12); border:1px solid rgba(30,200,120,.30); color:#8ff3c6;}
-    .err{display:block; background:rgba(255,80,80,.12); border:1px solid rgba(255,80,80,.30); color:#ffb0b0;}
-    .info{display:block; background:rgba(47,107,255,.12); border:1px solid rgba(47,107,255,.30); color:#b9ccff;}
-    .out{white-space:pre-wrap; background:#0c1428; border:1px solid #24345f; border-radius:10px; padding:12px; line-height:1.55;}
+    .msg{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:10px;
+      display:none;
+    }
+    .ok{
+      display:block;
+      background:rgba(30,200,120,.12);
+      border:1px solid rgba(30,200,120,.30);
+      color:#8ff3c6;
+    }
+    .err{
+      display:block;
+      background:rgba(255,80,80,.12);
+      border:1px solid rgba(255,80,80,.30);
+      color:#ffb0b0;
+    }
+    .info{
+      display:block;
+      background:rgba(47,107,255,.12);
+      border:1px solid rgba(47,107,255,.30);
+      color:#b9ccff;
+    }
+    .out{
+      background:#0c1428;
+      border:1px solid #24345f;
+      border-radius:10px;
+      padding:18px;
+      line-height:1.65;
+      min-height:120px;
+      overflow-wrap:anywhere;
+    }
     .small{font-size:12px; color:#9fb0d8;}
+
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+    .btn-secondary{
+      background:#1b2744;
+      border:1px solid #2a3b66;
+      color:#dce7ff;
+      padding:10px 14px;
+      border-radius:10px;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    .out h1, .out h2, .out h3{
+      color:#ffffff;
+      line-height:1.25;
+      margin-top:1.2em;
+      margin-bottom:.55em;
+    }
+    .out h1{font-size:30px;}
+    .out h2{font-size:24px;}
+    .out h3{font-size:19px;}
+    .out p{margin:.8em 0;}
+    .out ul, .out ol{padding-left:22px; margin:.8em 0;}
+    .out li{margin:.35em 0;}
+    .out strong{color:#ffffff;}
+    .out table{
+      width:100%;
+      border-collapse:collapse;
+      margin:16px 0;
+      font-size:14px;
+    }
+    .out th, .out td{
+      border:1px solid #2a3b66;
+      padding:10px;
+      text-align:left;
+      vertical-align:top;
+    }
+    .out th{
+      background:#15203a;
+      color:#fff;
+    }
+    .out blockquote{
+      margin:16px 0;
+      padding:12px 14px;
+      border-left:4px solid #2f6bff;
+      background:#101933;
+      color:#dce7ff;
+    }
+    .out hr{
+      border:none;
+      border-top:1px solid #25365f;
+      margin:24px 0;
+    }
+    .out code{
+      background:#101933;
+      padding:2px 6px;
+      border-radius:6px;
+      color:#dce7ff;
+    }
+
+    @media (max-width: 800px){
+      .row{grid-template-columns:1fr;}
+      body{padding:16px;}
+      .out{padding:14px;}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Ausol Blog Agent</h1>
-    <p class="sub">Generador semanal de artículos (SEO + GEO) para Citroën/Peugeot/Leapmotor y contenidos de taller.</p>
+    <p class="sub">Generador semanal de artículos SEO + GEO para Grupo Ausol, Citroën, Peugeot, Leapmotor, Spoticar y contenidos de taller.</p>
 
     <div class="card">
       <div class="row">
@@ -37,8 +173,10 @@
             <option value="grupoausol">Grupo Ausol</option>
             <option value="citroen">Citroën Ausol</option>
             <option value="peugeot">Peugeot Ausol</option>
+            <option value="leapmotor">Leapmotor Ausol</option>
+            <option value="spoticar">Spoticar Ausol</option>
           </select>
-          <p class="small">Publicaréis el mismo contenido en estas 3 webs.</p>
+          <p class="small">El contenido debe reforzar la entidad de Grupo Ausol y su contexto local en Málaga y la Axarquía.</p>
         </div>
         <div>
           <label>Idioma</label>
@@ -56,18 +194,18 @@
           <select id="mode">
             <option value="periodista">Semana 1: Novedades / Periodista</option>
             <option value="vecino">Semana 2: Práctico local / Vecino</option>
-            <option value="analista">Semana 3: Comparativa / Analista (tabla)</option>
+            <option value="analista">Semana 3: Comparativa / Analista</option>
             <option value="taller">Semana 4: Postventa / Jefe de taller</option>
           </select>
         </div>
         <div>
           <label>Tema</label>
-          <input id="topic" placeholder="Ej: Leapmotor T03 en Málaga: autonomía real, carga y dudas típicas" />
+          <input id="topic" placeholder="Ej: Leapmotor B10 en Málaga: autonomía, carga, uso real y dudas frecuentes" />
         </div>
       </div>
 
-      <label>Notas opcionales (ofertas, modelos concretos, enfoque local, etc.)</label>
-      <textarea id="notes" placeholder="Ej: mencionar A-7, calor en verano, aparcar en centro, taller Ausol, respaldo Stellantis, etc."></textarea>
+      <label>Notas opcionales</label>
+      <textarea id="notes" placeholder="Ej: respaldo Stellantis, uso real en la Axarquía, aparcamiento, A-7, calor en verano, concesionario oficial en Vélez-Málaga, etc."></textarea>
 
       <button class="btn" id="btn">Generar artículo</button>
       <div id="msg" class="msg"></div>
@@ -75,17 +213,31 @@
 
     <div class="card">
       <label>Salida</label>
-      <div id="out" class="out">Aquí aparecerá el artículo en Markdown cuando conectemos el backend.</div>
+      <div id="out" class="out">Aquí aparecerá el artículo generado.</div>
+
+      <div class="actions">
+        <button class="btn-secondary" id="copyHtmlBtn" type="button">Copiar HTML</button>
+        <button class="btn-secondary" id="copyTextBtn" type="button">Copiar texto</button>
+      </div>
     </div>
   </div>
 
   <script>
     const $ = (id) => document.getElementById(id);
-    function show(type, text){
+
+    function show(type, text) {
       const m = $('msg');
       m.className = 'msg ' + type;
       m.textContent = text;
       m.style.display = 'block';
+    }
+
+    function sanitizeBasicHtml(html) {
+      if (!html) return '';
+      return html
+        .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+        .replace(/on\w+="[^"]*"/gi, '')
+        .replace(/on\w+='[^']*'/gi, '');
     }
 
     $('btn').addEventListener('click', async () => {
@@ -96,26 +248,75 @@
         topic: $('topic').value.trim(),
         notes: $('notes').value.trim()
       };
-      if(!payload.topic){
-        show('err','Escribe un tema.');
+
+      if (!payload.topic) {
+        show('err', 'Escribe un tema.');
         return;
       }
+
       $('btn').disabled = true;
-      show('info','Generando… (cuando conectemos backend, aquí llamará a /api/blog/generate)');
-      try{
+      show('info', 'Generando artículo...');
+      $('out').innerHTML = 'Generando contenido...';
+
+      try {
         const r = await fetch('/api/blog/generate', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+
         const d = await r.json();
-        if(!d.success) throw new Error(d.error || 'Error');
-        $('out').textContent = d.markdown;
-        show('ok','Artículo generado. Puedes copiar/pegar en el CMS.');
-      }catch(e){
-        show('err','Aún no está conectado el backend o hay error: ' + e.message);
+
+        if (!r.ok || !d.success) {
+          throw new Error(
+            typeof d.error === 'string'
+              ? d.error
+              : (d.error?.message || 'Error al generar el artículo')
+          );
+        }
+
+        const html = sanitizeBasicHtml(d.html || '');
+
+        if (!html.trim()) {
+          throw new Error('La respuesta llegó vacía.');
+        }
+
+        $('out').innerHTML = html;
+        show('ok', 'Artículo generado. Ya se está renderizando en HTML.');
+      } catch (e) {
+        $('out').innerHTML = '';
+        show('err', 'Error al generar: ' + e.message);
+      } finally {
+        $('btn').disabled = false;
       }
-      $('btn').disabled = false;
+    });
+
+    $('copyHtmlBtn').addEventListener('click', async () => {
+      try {
+        const html = $('out').innerHTML.trim();
+        if (!html) {
+          show('err', 'No hay HTML para copiar.');
+          return;
+        }
+        await navigator.clipboard.writeText(html);
+        show('ok', 'HTML copiado al portapapeles.');
+      } catch (e) {
+        show('err', 'No se pudo copiar el HTML.');
+      }
+    });
+
+    $('copyTextBtn').addEventListener('click', async () => {
+      try {
+        const text = $('out').innerText.trim();
+        if (!text) {
+          show('err', 'No hay texto para copiar.');
+          return;
+        }
+        await navigator.clipboard.writeText(text);
+        show('ok', 'Texto copiado al portapapeles.');
+      } catch (e) {
+        show('err', 'No se pudo copiar el texto.');
+      }
     });
   </script>
 </body>
