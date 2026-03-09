@@ -92,7 +92,7 @@
   }
   .form-group { display: flex; flex-direction: column; gap: 8px; }
   label { font-size: 12px; font-weight: 500; color: var(--muted); }
-  input[type=text], input[type=number], input[type=password], textarea, select {
+  input[type=text], input[type=number], textarea, select {
     background: var(--dark2); border: 1px solid var(--border);
     color: var(--text); border-radius: 8px; padding: 10px 14px;
     font-family: 'Barlow', sans-serif; font-size: 14px; width: 100%;
@@ -121,19 +121,11 @@
   .tone-btn .tone-name { font-weight: 600; font-size: 13px; color: var(--text); display: block; margin-bottom: 2px; }
   .tone-btn.active { border-color: var(--accent); background: rgba(232,197,71,0.08); }
   .tone-btn.active .tone-name { color: var(--accent); }
-  .api-section {
-    background: rgba(232,197,71,0.05); border: 1px solid rgba(232,197,71,0.15);
-    border-radius: var(--radius); padding: 16px;
+  .server-note {
+    background: rgba(76,175,125,0.05); border: 1px solid rgba(76,175,125,0.2);
+    border-radius: var(--radius); padding: 14px 16px;
+    font-size: 12px; color: #b9d8c6; line-height: 1.5;
   }
-  .api-section.has-key { border-color: rgba(76,175,125,0.3); background: rgba(76,175,125,0.05); }
-  .api-row { display: flex; gap: 8px; }
-  .api-row input { flex: 1; font-size: 12px; }
-  .btn-sm {
-    background: var(--dark2); border: 1px solid var(--border);
-    color: var(--text); border-radius: 8px; padding: 8px 14px;
-    cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap; transition: all 0.2s;
-  }
-  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
   .btn-generate {
     width: 100%; padding: 16px; background: var(--accent); color: var(--black);
     border: none; border-radius: var(--radius);
@@ -274,16 +266,9 @@
   <div class="panel-left">
 
     <div>
-      <div class="section-label">API Key</div>
-      <div class="api-section" id="apiSection">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5;">
-          Introduce tu API key de Anthropic. Si no tienes, se usa la clave por defecto.
-        </div>
-        <div class="api-row">
-          <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
-          <button class="btn-sm" onclick="saveApiKey()">Guardar</button>
-        </div>
-        <div id="apiStatus" style="font-size:11px;margin-top:8px;color:var(--muted);"></div>
+      <div class="section-label">Servidor</div>
+      <div class="server-note">
+        Esta herramienta usa la clave segura del servidor. No necesitas introducir ninguna API key en esta pantalla.
       </div>
     </div>
 
@@ -425,35 +410,11 @@
 </div>
 
 <script>
-let apiKey = localStorage.getItem('ausol_apikey') || '';
 let selectedPlatform = 'wallapop';
 let selectedTone = 'profesional';
 let uploadedImages = [];
 let lastRawResult = '';
 let rawVisible = false;
-
-function saveApiKey() {
-  const val = document.getElementById('apiKeyInput').value.trim();
-  if (val) {
-    apiKey = val;
-    localStorage.setItem('ausol_apikey', val);
-    document.getElementById('apiStatus').textContent = '✓ API key guardada';
-    document.getElementById('apiStatus').style.color = 'var(--green)';
-    document.getElementById('apiSection').classList.add('has-key');
-  } else {
-    apiKey = '';
-    localStorage.removeItem('ausol_apikey');
-    document.getElementById('apiStatus').textContent = 'Usando clave del servidor';
-    document.getElementById('apiStatus').style.color = 'var(--muted)';
-  }
-}
-
-if (localStorage.getItem('ausol_apikey')) {
-  document.getElementById('apiKeyInput').value = localStorage.getItem('ausol_apikey');
-  document.getElementById('apiSection').classList.add('has-key');
-  document.getElementById('apiStatus').textContent = '✓ API key guardada';
-  document.getElementById('apiStatus').style.color = 'var(--green)';
-}
 
 const uploadZone = document.getElementById('uploadZone');
 uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = 'var(--accent)'; });
@@ -582,8 +543,7 @@ async function generarFicha() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        messages: [{ role: 'user', content }],
-        apiKey: apiKey || null
+        messages: [{ role: 'user', content }]
       })
     });
 
@@ -650,8 +610,12 @@ function copyResult() {
   const text = document.getElementById('rawOutput').textContent;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('btnCopy');
-    btn.textContent = '✓ Copiado!'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '📋 Copiar'; btn.classList.remove('copied'); }, 2000);
+    btn.textContent = '✓ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 Copiar';
+      btn.classList.remove('copied');
+    }, 2000);
   });
 }
 
