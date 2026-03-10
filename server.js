@@ -290,3 +290,46 @@ Recuerda: debe parecer contenido sólido de una marca real de automoción en Má
     return res.status(500).json({ success: false, error: error.message });
   }
 });
+// -----------------------------
+// 3) Ver modelos disponibles (Anthropic)
+// -----------------------------
+app.get('/api/anthropic/models', async (req, res) => {
+  try {
+    const key = process.env.ANTHROPIC_API_KEY;
+    if (!key) {
+      return res.status(400).json({ error: 'Falta ANTHROPIC_API_KEY en .env' });
+    }
+
+    const response = await fetch('https://api.anthropic.com/v1/models', {
+      method: 'GET',
+      headers: {
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+      },
+    });
+
+    const data = await response.json();
+    return res.status(response.status).json(data);
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+});
+
+// -----------------------------
+// Healthcheck simple
+// -----------------------------
+app.get('/api/health', (req, res) => {
+  return res.json({
+    ok: true,
+    app: 'ausol_fichas',
+    blogModel: process.env.ANTHROPIC_BLOG_MODEL || process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6',
+  });
+});
+
+// -----------------------------
+// Listen
+// -----------------------------
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`✅ Servidor Ausol Fichas corriendo en http://localhost:${PORT}`);
+});
