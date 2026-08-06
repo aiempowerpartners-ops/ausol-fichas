@@ -1,2 +1,5 @@
 node_modules
 .env
+data/trials.json
+data/dealers.json
+data/history.json
