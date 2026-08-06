@@ -3,71 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grupo Ausol — Generador de Fichas</title>
+<title>Ficha IA — Generador de Anuncios para Coches</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --black: #0a0a0a;
-    --dark: #111318;
-    --dark2: #1a1d24;
-    --card: #1e2128;
-    --border: #2a2e38;
-    --accent: #e8c547;
-    --accent2: #f5d96a;
-    --text: #e8eaf0;
-    --muted: #7a8090;
-    --red: #e05252;
-    --green: #4caf7d;
+    --bg: #f4f6f9;
+    --panel-left: #ffffff;
+    --panel-right: #eef1f6;
+    --card: #ffffff;
+    --border: #e3e7ee;
+    --accent: #2f6fed;
+    --accent2: #5b8def;
+    --accent-soft: rgba(47,111,237,0.08);
+    --accent-soft2: rgba(47,111,237,0.16);
+    --text: #1c2130;
+    --muted: #6b7280;
+    --red: #dc3545;
+    --red-soft: rgba(220,53,69,0.08);
+    --green: #1f9d55;
+    --green-soft: rgba(31,157,85,0.08);
     --radius: 12px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: var(--black);
+    background: var(--bg);
     color: var(--text);
     font-family: 'Barlow', sans-serif;
     min-height: 100vh;
   }
   header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 40px;
+    padding: 18px 40px;
     border-bottom: 1px solid var(--border);
-    background: rgba(10,10,10,0.95);
+    background: rgba(255,255,255,0.95);
     position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(6px);
   }
   .logo-area { display: flex; align-items: center; gap: 14px; }
   .logo-badge {
     width: 42px; height: 42px; background: var(--accent);
-    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900; font-size: 18px; color: var(--black);
+    font-weight: 900; font-size: 18px; color: #fff;
   }
   .logo-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px; }
   .logo-text span { color: var(--accent); }
+  .logo-sub { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px; }
   .header-tag {
     font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
     color: var(--muted); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px;
   }
-  .main { display: grid; grid-template-columns: 420px 1fr; min-height: calc(100vh - 70px); }
+  .trial-badge {
+    font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px;
+    background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-soft2);
+  }
+  .trial-badge.empty { background: var(--red-soft); color: var(--red); border-color: rgba(220,53,69,0.2); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .main { display: grid; grid-template-columns: 420px 1fr; min-height: calc(100vh - 68px); }
   .panel-left {
-    background: var(--dark);
+    background: var(--panel-left);
     border-right: 1px solid var(--border);
     padding: 32px 28px;
     overflow-y: auto;
     display: flex; flex-direction: column; gap: 24px;
   }
   .panel-right {
-    background: var(--dark2);
+    background: var(--panel-right);
     padding: 32px 36px;
     overflow-y: auto;
   }
   .section-label {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase;
+    font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
     color: var(--accent); margin-bottom: 12px;
     display: flex; align-items: center; gap: 8px;
   }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .dealer-box {
+    background: var(--accent-soft); border: 1px solid var(--accent-soft2);
+    border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 10px;
+  }
   .upload-zone {
     border: 2px dashed var(--border);
     border-radius: var(--radius);
@@ -76,79 +92,98 @@
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
+    background: #fafbfd;
   }
-  .upload-zone:hover { border-color: var(--accent); background: rgba(232,197,71,0.04); }
+  .upload-zone:hover { border-color: var(--accent); background: var(--accent-soft); }
   .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .upload-icon { font-size: 32px; margin-bottom: 10px; }
   .upload-zone p { color: var(--muted); font-size: 13px; }
   .upload-zone strong { color: var(--text); font-size: 14px; display: block; margin-bottom: 4px; }
   .thumb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
-  .thumb-item { position: relative; aspect-ratio: 4/3; border-radius: 8px; overflow: hidden; }
+  .thumb-item { position: relative; aspect-ratio: 4/3; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
   .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
   .thumb-remove {
     position: absolute; top: 4px; right: 4px;
-    background: rgba(0,0,0,0.75); color: #fff; border: none;
+    background: rgba(0,0,0,0.6); color: #fff; border: none;
     width: 20px; height: 20px; border-radius: 50%; cursor: pointer; font-size: 11px;
   }
+  .thumb-bg {
+    position: absolute; bottom: 4px; left: 4px; right: 4px;
+    background: rgba(0,0,0,0.6); color: #fff; border: none;
+    border-radius: 6px; padding: 3px 0; cursor: pointer; font-size: 10px; font-weight: 600;
+  }
+  .thumb-bg:disabled { opacity: 0.5; cursor: not-allowed; }
   .form-group { display: flex; flex-direction: column; gap: 8px; }
   label { font-size: 12px; font-weight: 500; color: var(--muted); }
-  input[type=text], input[type=number], textarea, select {
-    background: var(--dark2); border: 1px solid var(--border);
+  input[type=text], input[type=number], input[type=tel], textarea, select {
+    background: #fff; border: 1px solid var(--border);
     color: var(--text); border-radius: 8px; padding: 10px 14px;
     font-family: 'Barlow', sans-serif; font-size: 14px; width: 100%;
     transition: border-color 0.2s; outline: none;
   }
   input:focus, textarea:focus, select:focus { border-color: var(--accent); }
   textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-  select option { background: var(--dark2); }
+  select option { background: #fff; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .platform-btn {
-    background: var(--dark2); border: 1px solid var(--border);
+    background: #fff; border: 1px solid var(--border);
     border-radius: 8px; padding: 10px 6px;
     text-align: center; cursor: pointer; transition: all 0.2s;
     font-size: 11px; font-weight: 600; color: var(--muted); user-select: none;
   }
   .platform-btn .picon { font-size: 18px; display: block; margin-bottom: 4px; }
-  .platform-btn.active { border-color: var(--accent); background: rgba(232,197,71,0.08); color: var(--accent); }
+  .platform-btn.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
   .tone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .tone-btn {
-    background: var(--dark2); border: 1px solid var(--border);
+    background: #fff; border: 1px solid var(--border);
     border-radius: 8px; padding: 10px 12px;
     cursor: pointer; transition: all 0.2s;
     font-size: 12px; color: var(--muted); user-select: none;
   }
   .tone-btn .tone-name { font-weight: 600; font-size: 13px; color: var(--text); display: block; margin-bottom: 2px; }
-  .tone-btn.active { border-color: var(--accent); background: rgba(232,197,71,0.08); }
+  .tone-btn.active { border-color: var(--accent); background: var(--accent-soft); }
   .tone-btn.active .tone-name { color: var(--accent); }
   .server-note {
-    background: rgba(76,175,125,0.05); border: 1px solid rgba(76,175,125,0.2);
+    background: var(--green-soft); border: 1px solid rgba(31,157,85,0.2);
     border-radius: var(--radius); padding: 14px 16px;
-    font-size: 12px; color: #b9d8c6; line-height: 1.5;
+    font-size: 12px; color: #147a41; line-height: 1.5;
   }
   .btn-generate {
-    width: 100%; padding: 16px; background: var(--accent); color: var(--black);
+    width: 100%; padding: 16px; background: var(--accent); color: #fff;
     border: none; border-radius: var(--radius);
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 18px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
     cursor: pointer; transition: all 0.2s;
     display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 4px 14px rgba(47,111,237,0.25);
   }
   .btn-generate:hover { background: var(--accent2); transform: translateY(-1px); }
-  .btn-generate:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; transform: none; }
+  .btn-generate:disabled { background: #cfd4dd; color: #fff; cursor: not-allowed; transform: none; box-shadow: none; }
   .spinner {
-    width: 18px; height: 18px; border: 2px solid rgba(0,0,0,0.3);
-    border-top-color: var(--black); border-radius: 50%;
+    width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff; border-radius: 50%;
     animation: spin 0.7s linear infinite; display: none;
   }
   .btn-generate.loading .spinner { display: block; }
+  .trial-hint { font-size: 11px; color: var(--muted); text-align: center; }
+  .trial-exhausted {
+    background: var(--red-soft); border: 1px solid rgba(220,53,69,0.25);
+    border-radius: var(--radius); padding: 18px; text-align: center; display: flex; flex-direction: column; gap: 10px;
+  }
+  .trial-exhausted strong { color: var(--red); font-size: 14px; }
+  .trial-exhausted p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .btn-contact {
+    display: inline-block; background: var(--red); color: #fff; text-decoration: none;
+    padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  }
   .empty-state {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     text-align: center; gap: 16px; padding: 80px 40px; height: 100%;
   }
-  .empty-icon { font-size: 56px; opacity: 0.2; }
-  .empty-state h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; opacity: 0.3; }
+  .empty-icon { font-size: 56px; opacity: 0.25; }
+  .empty-state h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; opacity: 0.4; }
   .empty-state p { color: var(--muted); font-size: 14px; max-width: 300px; line-height: 1.6; }
   .loading-overlay {
     display: none; flex-direction: column;
@@ -163,9 +198,9 @@
   }
   .loading-text { color: var(--muted); font-size: 14px; }
   .error-box {
-    background: rgba(224,82,82,0.1); border: 1px solid rgba(224,82,82,0.3);
+    background: var(--red-soft); border: 1px solid rgba(220,53,69,0.25);
     border-radius: var(--radius); padding: 16px;
-    color: #ff8080; font-size: 14px; line-height: 1.5; display: none;
+    color: #b23a4a; font-size: 14px; line-height: 1.5; display: none;
   }
   .error-box.visible { display: block; }
   .result-area { display: none; flex-direction: column; gap: 20px; }
@@ -173,71 +208,81 @@
   .result-header {
     display: flex; align-items: center; justify-content: space-between;
     padding-bottom: 16px; border-bottom: 1px solid var(--border);
+    flex-wrap: wrap; gap: 10px;
   }
   .result-meta { display: flex; gap: 8px; }
   .meta-badge {
     font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
     padding: 3px 10px; border-radius: 20px; border: 1px solid;
   }
-  .meta-badge.platform { border-color: rgba(232,197,71,0.4); color: var(--accent); }
+  .meta-badge.platform { border-color: var(--accent-soft2); color: var(--accent); background: var(--accent-soft); }
   .meta-badge.tone { border-color: var(--border); color: var(--muted); }
   .btn-copy {
-    background: var(--card); border: 1px solid var(--border);
+    background: #fff; border: 1px solid var(--border);
     color: var(--muted); border-radius: 8px; padding: 8px 16px;
     cursor: pointer; font-size: 13px; transition: all 0.2s;
   }
   .btn-copy:hover { color: var(--accent); border-color: var(--accent); }
   .btn-copy.copied { color: var(--green); border-color: var(--green); }
+  .btn-copy-mini {
+    background: #fff; border: 1px solid var(--border);
+    color: var(--muted); border-radius: 6px; padding: 3px 9px;
+    cursor: pointer; font-size: 11px; transition: all 0.2s;
+  }
+  .btn-copy-mini:hover { color: var(--accent); border-color: var(--accent); }
+  .btn-copy-mini.copied { color: var(--green); border-color: var(--green); }
   .ficha-card {
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--radius); overflow: hidden;
     animation: fadeUp 0.4s ease;
+    box-shadow: 0 2px 10px rgba(20,25,40,0.04);
   }
   .ficha-top {
-    background: linear-gradient(135deg, #1a1d24 0%, #111318 100%);
+    background: linear-gradient(135deg, #f7f9fc 0%, #eef1f6 100%);
     padding: 24px; border-bottom: 1px solid var(--border);
   }
   .ficha-plataforma-tag {
     display: inline-block; margin-bottom: 12px;
     font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--black); background: var(--accent); padding: 3px 10px; border-radius: 4px;
+    color: #fff; background: var(--accent); padding: 3px 10px; border-radius: 4px;
   }
   .ficha-titulo { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
   .ficha-precio { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 900; color: var(--accent); }
   .ficha-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
-  .ficha-descripcion { font-size: 15px; line-height: 1.7; color: #c8cad0; white-space: pre-wrap; }
+  .ficha-descripcion { font-size: 15px; line-height: 1.7; color: #3a4051; white-space: pre-wrap; }
   .ficha-specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-  .spec-item { background: var(--dark2); border-radius: 8px; padding: 12px; }
+  .spec-item { background: #f7f9fc; border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
   .spec-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
   .spec-value { font-size: 14px; font-weight: 600; color: var(--text); margin-top: 3px; }
+  .ficha-section-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .ficha-section-title {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 10px;
+    color: var(--muted);
     display: flex; align-items: center; gap: 8px;
   }
   .ficha-section-title::before { content: ''; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
   .ficha-cta {
-    background: rgba(232,197,71,0.08); border: 1px solid rgba(232,197,71,0.2);
-    border-radius: 10px; padding: 16px; font-size: 14px; line-height: 1.6; font-style: italic;
+    background: var(--accent-soft); border: 1px solid var(--accent-soft2);
+    border-radius: 10px; padding: 16px; font-size: 14px; line-height: 1.6; font-style: italic; color: #2a3550;
   }
   .ficha-hashtags { display: flex; flex-wrap: wrap; gap: 6px; }
   .hashtag {
-    font-size: 12px; color: var(--accent); background: rgba(232,197,71,0.08);
-    border: 1px solid rgba(232,197,71,0.2); border-radius: 6px; padding: 3px 10px;
+    font-size: 12px; color: var(--accent); background: var(--accent-soft);
+    border: 1px solid var(--accent-soft2); border-radius: 6px; padding: 3px 10px;
   }
   .result-actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn-action {
-    background: var(--card); border: 1px solid var(--border);
+    background: #fff; border: 1px solid var(--border);
     color: var(--text); border-radius: 8px; padding: 10px 18px;
     cursor: pointer; font-size: 13px; transition: all 0.2s;
   }
   .btn-action:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-action.primary { background: var(--accent); color: var(--black); border-color: var(--accent); font-weight: 700; }
+  .btn-action.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; }
   .raw-output {
-    background: var(--black); border: 1px solid var(--border);
+    background: #f7f9fc; border: 1px solid var(--border);
     border-radius: var(--radius); padding: 20px;
-    font-size: 13px; line-height: 1.7; color: #c8cad0;
+    font-size: 13px; line-height: 1.7; color: #3a4051;
     white-space: pre-wrap; max-height: 400px; overflow-y: auto; display: none;
   }
   .raw-output.visible { display: block; }
@@ -256,10 +301,16 @@
 
 <header>
   <div class="logo-area">
-    <div class="logo-badge">GA</div>
-    <div class="logo-text">GRUPO <span>AUSOL</span></div>
+    <div class="logo-badge">FI</div>
+    <div>
+      <div class="logo-text">FICHA <span>IA</span></div>
+      <div class="logo-sub">Generador de anuncios para concesionarios</div>
+    </div>
   </div>
-  <div class="header-tag">Generador de Fichas IA</div>
+  <div class="header-right">
+    <span class="trial-badge" id="trialBadge">3 fichas de prueba</span>
+    <div class="header-tag">Powered by IA</div>
+  </div>
 </header>
 
 <div class="main">
@@ -269,6 +320,14 @@
       <div class="section-label">Servidor</div>
       <div class="server-note">
         Esta herramienta usa la clave segura del servidor. No necesitas introducir ninguna API key en esta pantalla.
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Tu concesionario</div>
+      <div class="dealer-box">
+        <div class="form-group"><label>Nombre del concesionario</label><input type="text" id="dealerName" placeholder="Ej: Motor Sur Málaga"></div>
+        <div class="form-group"><label>Teléfono / WhatsApp de contacto</label><input type="tel" id="dealerPhone" placeholder="Ej: 600 123 456"></div>
       </div>
     </div>
 
@@ -352,6 +411,13 @@
       <div class="spinner"></div>
       <span class="btn-text">⚡ GENERAR FICHA</span>
     </button>
+    <div class="trial-hint" id="trialHint"></div>
+
+    <div class="trial-exhausted" id="trialExhausted" style="display:none;">
+      <strong>Has usado tus 3 fichas de prueba</strong>
+      <p>Para seguir generando fichas ilimitadas para tu concesionario, ponte en contacto y activamos tu plan.</p>
+      <a class="btn-contact" id="contactLink" href="#" target="_blank">✉ Contactar para plan completo</a>
+    </div>
 
   </div>
 
@@ -382,7 +448,10 @@
         </div>
         <div class="ficha-body">
           <div>
-            <div class="ficha-section-title">Descripción</div>
+            <div class="ficha-section-title-row">
+              <div class="ficha-section-title">Descripción</div>
+              <button class="btn-copy-mini" onclick="copyBlock('fichaDescripcion', this)">📋 Copiar</button>
+            </div>
             <div class="ficha-descripcion" id="fichaDescripcion">—</div>
           </div>
           <div>
@@ -390,17 +459,25 @@
             <div class="ficha-specs-grid" id="fichaSpecs"></div>
           </div>
           <div>
-            <div class="ficha-section-title">Call to Action</div>
+            <div class="ficha-section-title-row">
+              <div class="ficha-section-title">Call to Action</div>
+              <button class="btn-copy-mini" onclick="copyBlock('fichaCta', this)">📋 Copiar</button>
+            </div>
             <div class="ficha-cta" id="fichaCta">—</div>
           </div>
           <div id="hashtagsSection" style="display:none;">
-            <div class="ficha-section-title">Hashtags</div>
+            <div class="ficha-section-title-row">
+              <div class="ficha-section-title">Hashtags</div>
+              <button class="btn-copy-mini" onclick="copyBlock('fichaHashtags', this)">📋 Copiar</button>
+            </div>
             <div class="ficha-hashtags" id="fichaHashtags"></div>
           </div>
         </div>
       </div>
       <div class="result-actions">
         <button class="btn-action primary" onclick="copyResult()">📋 Copiar texto completo</button>
+        <button class="btn-action" onclick="exportPDF()">🧾 Exportar PDF</button>
+        <button class="btn-action" onclick="exportCSV()">📊 Exportar CSV</button>
         <button class="btn-action" onclick="toggleRaw()">👁 Ver texto raw</button>
         <button class="btn-action" onclick="generarFicha()">🔄 Regenerar</button>
       </div>
@@ -410,12 +487,63 @@
 </div>
 
 <script>
+const TRIAL_LIMIT = 3;
+const CONTACT_EMAIL = 'aiempowerpartners@gmail.com';
+
 let selectedPlatform = 'wallapop';
 let selectedTone = 'profesional';
 let uploadedImages = [];
 let lastRawResult = '';
+let lastFicha = null;
 let rawVisible = false;
+let bgRemovalEnabled = false;
 
+// ---------- Datos del concesionario (persisten en este navegador) ----------
+const dealerNameEl = document.getElementById('dealerName');
+const dealerPhoneEl = document.getElementById('dealerPhone');
+dealerNameEl.value = localStorage.getItem('dealerName') || '';
+dealerPhoneEl.value = localStorage.getItem('dealerPhone') || '';
+dealerNameEl.addEventListener('input', () => localStorage.setItem('dealerName', dealerNameEl.value));
+dealerPhoneEl.addEventListener('input', () => localStorage.setItem('dealerPhone', dealerPhoneEl.value));
+
+// ---------- Límite de prueba ----------
+function getTrialCount() { return parseInt(localStorage.getItem('fichaTrialCount') || '0', 10); }
+function incTrialCount() { localStorage.setItem('fichaTrialCount', String(getTrialCount() + 1)); }
+function trialRemaining() { return Math.max(0, TRIAL_LIMIT - getTrialCount()); }
+
+function updateTrialUI() {
+  const remaining = trialRemaining();
+  const badge = document.getElementById('trialBadge');
+  const hint = document.getElementById('trialHint');
+  const btn = document.getElementById('btnGenerate');
+  const exhausted = document.getElementById('trialExhausted');
+  const contactLink = document.getElementById('contactLink');
+
+  contactLink.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Quiero el plan completo de Ficha IA')}&body=${encodeURIComponent('Hola, he probado Ficha IA y quiero seguir generando fichas para mi concesionario.')}`;
+
+  if (remaining > 0) {
+    badge.textContent = `${remaining} ficha${remaining === 1 ? '' : 's'} de prueba`;
+    badge.classList.remove('empty');
+    hint.textContent = `Te quedan ${remaining} ficha${remaining === 1 ? '' : 's'} gratis.`;
+    btn.style.display = 'flex';
+    exhausted.style.display = 'none';
+  } else {
+    badge.textContent = 'Prueba agotada';
+    badge.classList.add('empty');
+    hint.textContent = '';
+    btn.style.display = 'none';
+    exhausted.style.display = 'flex';
+  }
+}
+updateTrialUI();
+
+// ---------- Detección de funciones del servidor (quitar fondo) ----------
+fetch('/api/health').then(r => r.json()).then(d => {
+  bgRemovalEnabled = !!d.bgRemovalEnabled;
+  renderThumbs();
+}).catch(() => {});
+
+// ---------- Subida de fotos ----------
 const uploadZone = document.getElementById('uploadZone');
 uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = 'var(--accent)'; });
 uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor = ''; });
@@ -439,12 +567,39 @@ function renderThumbs() {
   uploadedImages.forEach((img, i) => {
     const div = document.createElement('div');
     div.className = 'thumb-item';
-    div.innerHTML = `<img src="data:${img.type};base64,${img.base64}"><button class="thumb-remove" onclick="removeImage(${i})">×</button>`;
+    const bgBtn = bgRemovalEnabled
+      ? `<button class="thumb-bg" id="bgBtn${i}" onclick="removeBackground(${i})">✨ Quitar fondo</button>`
+      : '';
+    div.innerHTML = `<img src="data:${img.type};base64,${img.base64}"><button class="thumb-remove" onclick="removeImage(${i})">×</button>${bgBtn}`;
     grid.appendChild(div);
   });
 }
 
 function removeImage(i) { uploadedImages.splice(i, 1); renderThumbs(); }
+
+async function removeBackground(i) {
+  const btn = document.getElementById(`bgBtn${i}`);
+  if (!btn) return;
+  const original = btn.textContent;
+  btn.textContent = '...';
+  btn.disabled = true;
+  try {
+    const img = uploadedImages[i];
+    const response = await fetch('/api/remove-bg', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: img.base64, type: img.type })
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(typeof data.error === 'string' ? data.error : JSON.stringify(data.error));
+    uploadedImages[i] = { base64: data.image, type: data.type || 'image/png' };
+    renderThumbs();
+  } catch (e) {
+    alert('No se pudo quitar el fondo: ' + e.message);
+    btn.textContent = original;
+    btn.disabled = false;
+  }
+}
 
 function selectPlatform(el) {
   document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
@@ -458,8 +613,8 @@ function selectTone(el) {
   selectedTone = el.dataset.tone;
 }
 
-function buildPrompt() {
-  const datos = {
+function getDatos() {
+  return {
     marca: document.getElementById('marca').value,
     modelo: document.getElementById('modelo').value,
     anno: document.getElementById('anno').value,
@@ -471,6 +626,13 @@ function buildPrompt() {
     extras: document.getElementById('extras').value,
     descripcion: document.getElementById('descripcion').value
   };
+}
+
+function buildPrompt() {
+  const datos = getDatos();
+  const dealerName = dealerNameEl.value.trim() || 'el concesionario';
+  const dealerPhone = dealerPhoneEl.value.trim();
+  const contactoLinea = dealerPhone ? `📍 ${dealerName} | ☎️ ${dealerPhone}` : `📍 ${dealerName}`;
 
   const vehicleInfo = Object.entries(datos).filter(([,v]) => v).map(([k,v]) => `${k}: ${v}`).join('\n');
 
@@ -480,7 +642,7 @@ function buildPrompt() {
     'instagram': 'Instagram: máx 150 palabras, visual y emocional, mínimo 20 hashtags relevantes, emojis estratégicos.',
     'tiktok': 'TikTok: 60-80 palabras máximo, muy dinámico y juvenil, 5-10 hashtags trending, lenguaje coloquial.',
     'facebook': 'Facebook: 150-300 palabras, cercano y conversacional, invitar a contactar por WhatsApp.',
-    'web': 'Web propia: 400-700 palabras, profesional y completo, SEO, mencionar garantía y servicios Grupo Ausol.'
+    'web': 'Web propia: 400-700 palabras, profesional y completo, SEO, mencionar garantía y servicios del concesionario.'
   };
 
   const tones = {
@@ -492,7 +654,7 @@ function buildPrompt() {
     'tecnico': 'Tono técnico, datos exactos, especificaciones completas.'
   };
 
-  return `Eres el agente de marketing de Grupo Ausol, concesionario oficial Citroën y Peugeot en Vélez-Málaga desde 1983.
+  return `Eres el agente de marketing de ${dealerName}, un concesionario de coches.
 
 DATOS DEL VEHÍCULO:
 ${vehicleInfo || 'Extrae los datos de las imágenes proporcionadas.'}
@@ -517,11 +679,13 @@ Responde SOLO con este JSON sin markdown:
   ],
   "cta": "Call to action personalizado",
   "hashtags": ["hashtag1", "hashtag2"],
-  "texto_completo": "Texto listo para copiar y pegar en la plataforma. Incluir al final: 📍 Grupo Ausol | Vélez-Málaga | ☎️ 648 274 476"
+  "texto_completo": "Texto listo para copiar y pegar en la plataforma. Incluir al final: ${contactoLinea}"
 }`;
 }
 
 async function generarFicha() {
+  if (trialRemaining() <= 0) { updateTrialUI(); return; }
+
   const btn = document.getElementById('btnGenerate');
   btn.disabled = true; btn.classList.add('loading');
   showSection('loading');
@@ -555,8 +719,11 @@ async function generarFicha() {
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('Respuesta inesperada, intenta de nuevo.');
     const ficha = JSON.parse(jsonMatch[0]);
+    lastFicha = ficha;
     renderFicha(ficha);
     showSection('result');
+    incTrialCount();
+    updateTrialUI();
 
   } catch(e) {
     document.getElementById('errorBox').innerHTML = `<strong>⚠ Error:</strong> ${e.message}`;
@@ -619,9 +786,88 @@ function copyResult() {
   });
 }
 
+function copyBlock(elId, btn) {
+  const el = document.getElementById(elId);
+  const text = el.innerText || el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.textContent = '✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
 function toggleRaw() {
   rawVisible = !rawVisible;
   document.getElementById('rawOutput').classList.toggle('visible', rawVisible);
+}
+
+// ---------- Exportar PDF ----------
+function exportPDF() {
+  if (!lastFicha) return;
+  const f = lastFicha;
+  const datos = getDatos();
+  const specsHtml = (f.specs || []).filter(s => s.value && s.value !== 'N/A')
+    .map(s => `<div style="display:inline-block;background:#f2f4f8;border:1px solid #e3e7ee;border-radius:6px;padding:8px 12px;margin:4px 6px 0 0;"><div style="font-size:10px;color:#6b7280;text-transform:uppercase;">${s.label}</div><div style="font-size:13px;font-weight:600;">${s.value}</div></div>`).join('');
+  const hashtagsHtml = (f.hashtags || []).map(h => (h.startsWith('#') ? h : '#'+h)).join(' ');
+  const dealerName = dealerNameEl.value.trim() || 'Concesionario';
+  const dealerPhone = dealerPhoneEl.value.trim();
+
+  const html = `
+  <html><head><meta charset="utf-8"><title>${f.titulo || 'Ficha del vehículo'}</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;color:#1c2130;padding:32px;max-width:700px;margin:0 auto;}
+    h1{font-size:24px;margin-bottom:4px;}
+    .precio{font-size:28px;font-weight:900;color:#2f6fed;margin-bottom:16px;}
+    .desc{font-size:14px;line-height:1.6;margin-bottom:16px;white-space:pre-wrap;}
+    .cta{background:#f2f4f8;border:1px solid #e3e7ee;border-radius:8px;padding:12px;font-style:italic;font-size:13px;margin-bottom:16px;}
+    .foot{margin-top:24px;font-size:12px;color:#6b7280;border-top:1px solid #e3e7ee;padding-top:12px;}
+  </style></head>
+  <body>
+    <div style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:1px;">${selectedPlatform} · ${selectedTone}</div>
+    <h1>${f.titulo || `${datos.marca} ${datos.modelo}`}</h1>
+    <div class="precio">${f.precio_display || (datos.precio ? datos.precio + ' €' : '')}</div>
+    <div class="desc">${(f.descripcion || '').replace(/</g,'&lt;')}</div>
+    <div>${specsHtml}</div>
+    <div class="cta">${(f.cta || '').replace(/</g,'&lt;')}</div>
+    <div style="margin-top:12px;font-size:12px;">${hashtagsHtml}</div>
+    <div class="foot">${dealerName}${dealerPhone ? ' · ' + dealerPhone : ''} · Generado con Ficha IA</div>
+  </body></html>`;
+
+  const w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.onload = () => { w.focus(); w.print(); };
+  setTimeout(() => { w.focus(); w.print(); }, 400);
+}
+
+// ---------- Exportar CSV ----------
+function exportCSV() {
+  if (!lastFicha) return;
+  const f = lastFicha;
+  const datos = getDatos();
+  const specsFlat = (f.specs || []).map(s => `${s.label}: ${s.value}`).join(' | ');
+  const hashtagsFlat = (f.hashtags || []).join(' ');
+
+  const headers = ['plataforma','tono','marca','modelo','anno','precio','km','combustible','cambio','color','titulo','precio_display','descripcion','specs','cta','hashtags'];
+  const row = [
+    selectedPlatform, selectedTone, datos.marca, datos.modelo, datos.anno, datos.precio, datos.km,
+    datos.combustible, datos.cambio, datos.color, f.titulo, f.precio_display, f.descripcion,
+    specsFlat, f.cta, hashtagsFlat
+  ];
+
+  const escapeCsv = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const csv = headers.map(escapeCsv).join(',') + '\n' + row.map(escapeCsv).join(',');
+
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ficha-${(datos.marca || 'coche').toLowerCase()}-${(datos.modelo || '').toLowerCase()}.csv`.replace(/\s+/g, '-');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 </script>
 </body>
