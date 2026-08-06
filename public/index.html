@@ -487,8 +487,9 @@
 </div>
 
 <script>
-const TRIAL_LIMIT = 3;
 const CONTACT_EMAIL = 'aiempowerpartners@gmail.com';
+const urlParams = new URLSearchParams(window.location.search);
+const dealerCode = (urlParams.get('c') || '').trim();
 
 let selectedPlatform = 'wallapop';
 let selectedTone = 'profesional';
@@ -497,6 +498,7 @@ let lastRawResult = '';
 let lastFicha = null;
 let rawVisible = false;
 let bgRemovalEnabled = false;
+let currentTrial = { used: 0, remaining: null, limit: null, unlimited: false };
 
 // ---------- Datos del concesionario (persisten en este navegador) ----------
 const dealerNameEl = document.getElementById('dealerName');
@@ -506,13 +508,8 @@ dealerPhoneEl.value = localStorage.getItem('dealerPhone') || '';
 dealerNameEl.addEventListener('input', () => localStorage.setItem('dealerName', dealerNameEl.value));
 dealerPhoneEl.addEventListener('input', () => localStorage.setItem('dealerPhone', dealerPhoneEl.value));
 
-// ---------- Límite de prueba ----------
-function getTrialCount() { return parseInt(localStorage.getItem('fichaTrialCount') || '0', 10); }
-function incTrialCount() { localStorage.setItem('fichaTrialCount', String(getTrialCount() + 1)); }
-function trialRemaining() { return Math.max(0, TRIAL_LIMIT - getTrialCount()); }
-
+// ---------- Límite de prueba (controlado por el servidor) ----------
 function updateTrialUI() {
-  const remaining = trialRemaining();
   const badge = document.getElementById('trialBadge');
   const hint = document.getElementById('trialHint');
   const btn = document.getElementById('btnGenerate');
@@ -521,6 +518,16 @@ function updateTrialUI() {
 
   contactLink.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Quiero el plan completo de Ficha IA')}&body=${encodeURIComponent('Hola, he probado Ficha IA y quiero seguir generando fichas para mi concesionario.')}`;
 
+  if (currentTrial.unlimited) {
+    badge.textContent = 'Acceso completo';
+    badge.classList.remove('empty');
+    hint.textContent = '';
+    btn.style.display = 'flex';
+    exhausted.style.display = 'none';
+    return;
+  }
+
+  const remaining = currentTrial.remaining ?? 0;
   if (remaining > 0) {
     badge.textContent = `${remaining} ficha${remaining === 1 ? '' : 's'} de prueba`;
     badge.classList.remove('empty');
@@ -535,7 +542,18 @@ function updateTrialUI() {
     exhausted.style.display = 'flex';
   }
 }
-updateTrialUI();
+
+async function loadTrialStatus() {
+  try {
+    const qs = dealerCode ? `?code=${encodeURIComponent(dealerCode)}` : '';
+    const r = await fetch(`/api/trial-status${qs}`);
+    currentTrial = await r.json();
+  } catch (e) {
+    currentTrial = { used: 0, remaining: 3, limit: 3, unlimited: false };
+  }
+  updateTrialUI();
+}
+loadTrialStatus();
 
 // ---------- Detección de funciones del servidor (quitar fondo) ----------
 fetch('/api/health').then(r => r.json()).then(d => {
@@ -684,7 +702,7 @@ Responde SOLO con este JSON sin markdown:
 }
 
 async function generarFicha() {
-  if (trialRemaining() <= 0) { updateTrialUI(); return; }
+  if (!currentTrial.unlimited && (currentTrial.remaining ?? 0) <= 0) { updateTrialUI(); return; }
 
   const btn = document.getElementById('btnGenerate');
   btn.disabled = true; btn.classList.add('loading');
@@ -707,12 +725,25 @@ async function generarFicha() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        messages: [{ role: 'user', content }]
+        messages: [{ role: 'user', content }],
+        dealerCode
       })
     });
 
     const data = await response.json();
+
+    if (response.status === 403 && data.trialExhausted) {
+      currentTrial = data.trial;
+      updateTrialUI();
+      throw new Error('Has agotado tus fichas de prueba. Ponte en contacto para el plan completo.');
+    }
+
     if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+
+    if (data._trial) {
+      currentTrial = data._trial;
+      updateTrialUI();
+    }
 
     const text = data.content[0].text;
     lastRawResult = text;
@@ -722,8 +753,6 @@ async function generarFicha() {
     lastFicha = ficha;
     renderFicha(ficha);
     showSection('result');
-    incTrialCount();
-    updateTrialUI();
 
   } catch(e) {
     document.getElementById('errorBox').innerHTML = `<strong>⚠ Error:</strong> ${e.message}`;
