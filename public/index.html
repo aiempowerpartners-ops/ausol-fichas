@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ficha IA — Generador de Anuncios para Coches</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f4f6f9;
@@ -35,7 +33,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Barlow', sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
@@ -71,14 +69,14 @@
     width: 42px; height: 42px;
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 100%);
     border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
     font-weight: 900; font-size: 18px; color: #fff;
     box-shadow: 0 6px 18px rgba(47,111,237,0.35);
     transition: transform 0.3s ease;
   }
   .logo-area:hover .logo-badge { transform: rotate(-6deg) scale(1.06); }
   .logo-text {
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px;
+    font-family: Verdana, Geneva, sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px;
     background: linear-gradient(90deg, var(--text) 0%, var(--text) 55%, var(--accent) 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
@@ -114,7 +112,7 @@
     overflow-y: auto;
   }
   .section-label {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
     font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
     color: var(--accent); margin-bottom: 12px;
     display: flex; align-items: center; gap: 8px;
@@ -163,7 +161,7 @@
   input[type=text], input[type=number], input[type=tel], textarea, select {
     background: #fff; border: 1px solid var(--border);
     color: var(--text); border-radius: 8px; padding: 10px 14px;
-    font-family: 'Barlow', sans-serif; font-size: 14px; width: 100%;
+    font-family: Verdana, Geneva, sans-serif; font-size: 14px; width: 100%;
     transition: border-color 0.2s; outline: none;
   }
   input:focus, textarea:focus, select:focus { border-color: var(--accent); }
@@ -206,7 +204,7 @@
     background-size: 200% 200%;
     color: #fff;
     border: none; border-radius: var(--radius);
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
     font-size: 18px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
     cursor: pointer; transition: all 0.25s ease;
     display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -228,18 +226,43 @@
   }
   .trial-exhausted strong { color: var(--red); font-size: 14px; }
   .trial-exhausted p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .contact-btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
   .btn-contact {
-    display: inline-block; background: var(--red); color: #fff; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px; color: #fff; text-decoration: none;
     padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
+  .btn-contact:hover { transform: translateY(-2px); }
+  .btn-contact.whatsapp { background: #25d366; box-shadow: 0 6px 16px rgba(37,211,102,0.35); }
+  .btn-contact.email { background: var(--red); box-shadow: 0 6px 16px rgba(220,53,69,0.3); }
   .empty-state {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    text-align: center; gap: 16px; padding: 80px 40px; height: 100%;
+    text-align: center; gap: 16px; padding: 60px 40px; height: 100%;
+  }
+  .car3d-wrap { perspective: 1000px; width: 260px; height: 150px; margin: 0 auto; }
+  .car3d {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    animation: carFloat 4.5s ease-in-out infinite;
+  }
+  .car3d-body { position: absolute; left: 10px; top: 0; transform: translateZ(30px); filter: drop-shadow(0 10px 14px rgba(30,40,70,0.2)); }
+  .car3d-shadow { position: absolute; left: 10px; bottom: -6px; transform: translateZ(-20px); }
+  .car3d-shadow ellipse { fill: rgba(30,40,70,0.16); }
+  .car3d-wheel {
+    position: absolute; width: 28px; height: 28px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #4a5064, #1c2130 70%);
+    border: 3px solid #0e1118; bottom: 12px; transform: translateZ(38px);
+  }
+  .car3d-wheel-l { left: 48px; }
+  .car3d-wheel-r { left: 190px; }
+  @keyframes carFloat {
+    0%, 100% { transform: perspective(1000px) translateY(0) rotateY(var(--car-ry, 0deg)) rotateX(var(--car-rx, 0deg)); }
+    50% { transform: perspective(1000px) translateY(-8px) rotateY(var(--car-ry, 0deg)) rotateX(var(--car-rx, 0deg)); }
   }
   .empty-icon { font-size: 56px; opacity: 0.3; animation: floatIcon 4s ease-in-out infinite; }
   @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-  .empty-state h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; opacity: 0.4; }
+  .empty-state h2 { font-family: Verdana, Geneva, sans-serif; font-size: 28px; font-weight: 700; opacity: 0.4; }
   .empty-state p { color: var(--muted); font-size: 14px; max-width: 300px; line-height: 1.6; }
   .loading-overlay {
     display: none; flex-direction: column;
@@ -310,8 +333,8 @@
     color: #fff; background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 100%);
     padding: 3px 10px; border-radius: 4px;
   }
-  .ficha-titulo { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-  .ficha-precio { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 900; color: var(--accent); }
+  .ficha-titulo { font-family: Verdana, Geneva, sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .ficha-precio { font-family: Verdana, Geneva, sans-serif; font-size: 36px; font-weight: 900; color: var(--accent); }
   .ficha-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
   .ficha-descripcion { font-size: 15px; line-height: 1.7; color: #3a4051; white-space: pre-wrap; }
   .ficha-specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
@@ -321,7 +344,7 @@
   .spec-value { font-size: 14px; font-weight: 600; color: var(--text); margin-top: 3px; }
   .ficha-section-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .ficha-section-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
     font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
     color: var(--muted);
     display: flex; align-items: center; gap: 8px;
@@ -508,14 +531,34 @@
     <div class="trial-exhausted" id="trialExhausted" style="display:none;">
       <strong>Has usado tus 3 fichas de prueba</strong>
       <p>Para seguir generando fichas ilimitadas para tu concesionario, ponte en contacto y activamos tu plan.</p>
-      <a class="btn-contact" id="contactLink" href="#" target="_blank">✉ Contactar para plan completo</a>
+      <div class="contact-btn-row">
+        <a class="btn-contact whatsapp" id="contactWhatsapp" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
+        <a class="btn-contact email" id="contactEmail" href="#" target="_blank" rel="noopener">✉ Email</a>
+      </div>
     </div>
 
   </div>
 
   <div class="panel-right" id="panelRight">
     <div class="empty-state" id="emptyState">
-      <div class="empty-icon">🚘</div>
+      <div class="car3d-wrap" id="car3dWrap">
+        <div class="car3d" id="car3d">
+          <svg class="car3d-shadow" viewBox="0 0 240 30" width="240" height="30"><ellipse cx="120" cy="15" rx="105" ry="10"/></svg>
+          <svg class="car3d-body" viewBox="0 0 240 110" width="240" height="110">
+            <defs>
+              <linearGradient id="carBodyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--accent2)"/>
+                <stop offset="100%" stop-color="var(--accent3)"/>
+              </linearGradient>
+            </defs>
+            <path d="M22,78 Q20,50 48,45 L72,45 Q88,18 118,18 L152,18 Q180,18 192,45 L212,45 Q228,48 228,66 L228,78 Z" fill="url(#carBodyGrad)" stroke="#1c2130" stroke-width="2"/>
+            <path d="M88,44 Q98,26 118,26 L148,26 Q164,26 176,44 Z" fill="rgba(255,255,255,0.55)"/>
+            <rect x="30" y="70" width="190" height="10" rx="5" fill="#1c2130" opacity="0.15"/>
+          </svg>
+          <div class="car3d-wheel car3d-wheel-l"></div>
+          <div class="car3d-wheel car3d-wheel-r"></div>
+        </div>
+      </div>
       <h2>Tu ficha aparecerá aquí</h2>
       <p>Rellena los datos, elige plataforma y tono, y pulsa Generar Ficha.</p>
     </div>
@@ -579,7 +622,8 @@
 </div>
 
 <script>
-const CONTACT_EMAIL = 'aiempowerpartners@gmail.com';
+const CONTACT_EMAIL = 'estela@aiempowerpartners.com';
+const CONTACT_PHONE = '34624007305';
 const urlParams = new URLSearchParams(window.location.search);
 const dealerCode = (urlParams.get('c') || '').trim();
 
@@ -710,9 +754,13 @@ function updateTrialUI() {
   const hint = document.getElementById('trialHint');
   const btn = document.getElementById('btnGenerate');
   const exhausted = document.getElementById('trialExhausted');
-  const contactLink = document.getElementById('contactLink');
+  const contactWhatsapp = document.getElementById('contactWhatsapp');
+  const contactEmail = document.getElementById('contactEmail');
 
-  contactLink.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Quiero el plan completo de Ficha IA')}&body=${encodeURIComponent('Hola, he probado Ficha IA y quiero seguir generando fichas para mi concesionario.')}`;
+  const dealerNameForMsg = (dealerNameEl.value || '').trim();
+  const waText = `Hola, soy${dealerNameForMsg ? ' de ' + dealerNameForMsg : ''} y he probado Ficha IA. Quiero activar el plan completo para mi concesionario.`;
+  contactWhatsapp.href = `https://wa.me/${CONTACT_PHONE}?text=${encodeURIComponent(waText)}`;
+  contactEmail.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Quiero el plan completo de Ficha IA')}&body=${encodeURIComponent('Hola, he probado Ficha IA y quiero seguir generando fichas para mi concesionario.')}`;
 
   if (currentTrial.unlimited) {
     badge.textContent = 'Acceso completo';
@@ -1109,6 +1157,22 @@ function exportCSV() {
   });
   card.addEventListener('mouseleave', () => {
     card.style.transform = 'perspective(900px) rotateY(0) rotateX(0) translateY(0)';
+  });
+})();
+
+// ---------- Coche 3D que responde al cursor ----------
+(function initCar3D() {
+  const wrap = document.getElementById('car3dWrap');
+  const car = document.getElementById('car3d');
+  if (!wrap || !car) return;
+  const maxTilt = 14;
+  // El coche reacciona al movimiento del cursor por toda la pantalla, no solo al pasar por encima.
+  document.addEventListener('mousemove', e => {
+    if (!document.getElementById('emptyState') || document.getElementById('emptyState').style.display === 'none') return;
+    const x = (e.clientX / window.innerWidth) - 0.5;
+    const y = (e.clientY / window.innerHeight) - 0.5;
+    car.style.setProperty('--car-ry', `${x * maxTilt}deg`);
+    car.style.setProperty('--car-rx', `${-y * maxTilt}deg`);
   });
 })();
 </script>
